@@ -15,6 +15,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * Classe pour gérer le JSON des requêtes à l'API de Gemini.
@@ -22,8 +25,9 @@ import java.util.Map;
  */
 @Dependent
 public class JsonUtilPourGemini implements Serializable {
+    Logger logger = Logger.getLogger(JsonUtilPourGemini.class.getName());
 
-    private String systemRole; // = "helpful assistant";
+    private String systemRole= "helpful assistant";
     /**
      * Pour ajouter une nouvelle valeur à la fin du tableau JSON "messages" dans le document JSON de la requête.
      * Le "-" final indique que la valeur sera ajoutée à la fin du tableau.
@@ -80,6 +84,8 @@ public class JsonUtilPourGemini implements Serializable {
         if (this.requeteJson == null) {
             // Si c'est la première question, crée la requête JSON avec le rôle système.
             requestBody = creerRequeteJson(this.systemRole, question);
+            logger.log(new LogRecord(Level.WARNING,requestBody));
+
         } else {
             // Ajout de la question.
             // Ce qui sera envoyé dans le corps de la requête POST.

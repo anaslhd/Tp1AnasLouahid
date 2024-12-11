@@ -6,6 +6,8 @@ import jakarta.faces.model.SelectItem;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import ma.emsi.anaslouahid.tp1anaslouahid.Records.LlmInteraction;
+import ma.emsi.anaslouahid.tp1anaslouahid.llm.JsonUtilPourGemini;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,6 +48,8 @@ public class Bb implements Serializable {
     private Boolean Debug=false;
     private String texteReponseJson;
     private String texteRequeteJson;
+    @Inject
+    private JsonUtilPourGemini jsonUtil;
 
     /**
      * Contexte JSF. Utilisé pour qu'un message d'erreur s'affiche dans le formulaire.
@@ -133,45 +137,19 @@ public class Bb implements Serializable {
             return null;
         }
 
-        // Initialisation de la réponse avec les délimiteurs
-        this.reponse = "||";
-
-        // Ajouter le rôle système si la conversation commence
-        if (this.conversation.isEmpty()) {
-            this.reponse += systemRole.toUpperCase(Locale.FRENCH) + "\n";
-            this.systemRoleChangeable = false;
+        try {
+            LlmInteraction interaction = jsonUtil.envoyerRequete(question);
+            this.reponse = interaction.extractResponse();
+            this.texteRequeteJson = interaction.texteReponseJson();
+            this.texteReponseJson = interaction.texteRequeteJson();
+        } catch (Exception e) {
+            FacesMessage message =
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Problème de connexion avec l'API du LLM",
+                            "Problème de connexion avec l'API du LLM" + e.getMessage());
+            facesContext.addMessage(null, message);
         }
-
-        this.reponse += question.toLowerCase(Locale.FRENCH) + "||";
-
-        // Détails ASCII
-        StringBuilder asciiDetails = new StringBuilder("\n--- Détails ASCII ---\n");
-        int totalAsciiSum = 0;
-
-        String[] words = question.split("\\s+"); // Divise la question en mots
-        for (String word : words) {
-            int wordAsciiSum = 0;
-            asciiDetails.append("Mot : ").append(word).append("\n");
-
-            for (char c : word.toCharArray()) {
-                int asciiValue = (int) c;
-                wordAsciiSum += asciiValue;
-                asciiDetails.append("  Lettre : '").append(c).append("' => Code ASCII : ").append(asciiValue).append("\n");
-            }
-
-            asciiDetails.append("  Somme ASCII du mot : ").append(wordAsciiSum).append("\n");
-            totalAsciiSum += wordAsciiSum;
-        }
-
-        asciiDetails.append("---\n")
-                .append("Somme ASCII totale de la phrase : ").append(totalAsciiSum).append("\n");
-
-        // Ajouter les détails ASCII à la réponse
-        this.reponse += asciiDetails;
-
-        // Afficher la conversation complète
-        afficherConversation();
-
+        
         return null;
     }
 
