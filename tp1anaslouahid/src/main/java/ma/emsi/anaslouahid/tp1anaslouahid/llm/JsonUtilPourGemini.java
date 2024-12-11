@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 @Dependent
 public class JsonUtilPourGemini implements Serializable {
     Logger logger = Logger.getLogger(JsonUtilPourGemini.class.getName());
-
-    private String systemRole= "helpful assistant";
+    //Voici le rôle systéme que j'ai ajouté
+    private String systemRole= "répond moi comme si tu étais tom cruise";
     /**
      * Pour ajouter une nouvelle valeur à la fin du tableau JSON "messages" dans le document JSON de la requête.
      * Le "-" final indique que la valeur sera ajoutée à la fin du tableau.
