@@ -149,7 +149,8 @@ public class Bb implements Serializable {
                             "Problème de connexion avec l'API du LLM" + e.getMessage());
             facesContext.addMessage(null, message);
         }
-        
+        afficherConversation();
+
         return null;
     }
 
