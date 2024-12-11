@@ -30,8 +30,8 @@ public class LlmClientPourGemini implements Serializable {
         // Récupère la clé secrète pour travailler avec l'API du LLM, mise dans une variable d'environnement
         // du système d'exploitation.
         //A ECRIRE...
-        // Client REST pour envoyer des requêtes vers les endpoints de l'API d'OpenAI
         this.key=System.getProperty("Gemini_key");
+        // Client REST pour envoyer des requêtes vers les endpoints de l'API d'OpenAI
         this.clientRest = ClientBuilder.newClient();
         // Endpoint REST pour envoyer la question à l'API.
         this.target = clientRest.target("A CHERCHER DANS LE COURS...");
